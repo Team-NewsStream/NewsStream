@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: ${AWS_DB_URL}
+    username: ${AWS_DB_USER}
+    password: ${AWS_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update # change to 'validate' in production
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 50
+          order_inserts: true
+          order_updates: true
+
+newsapi:
+  baseUrl: ${NEWSAPI_BASE_URL}
+  apiKey: ${NEWSAPI_KEY}
+
+scheduler:
+  internal-token: ${SCHEDULER_INTERNAL_TOKEN}
+
+jwt:
+  secret: ${JWT_SECRET}
