@@ -10,7 +10,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: update # change to 'validate' in production
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
@@ -25,6 +25,9 @@ spring:
 
 scraper:
   base-url: ${SCRAPER_BASE_URL}
+
+ml-service:
+  base-url: ${ML_SERVICE_URL}
 
 scheduler:
   internal-token: ${SCHEDULER_INTERNAL_TOKEN}
