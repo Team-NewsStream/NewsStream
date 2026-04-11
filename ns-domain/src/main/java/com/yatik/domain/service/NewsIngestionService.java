@@ -18,6 +18,19 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Domain service responsible for fetching, deduplicating, enriching, and persisting
+ * news articles from external providers.
+ *
+ * <p>Orchestrates the full ingestion pipeline:
+ * <ol>
+ *   <li>Fetches the latest global and trending articles via {@link NewsProviderPort}.</li>
+ *   <li>Deduplicates against already-persisted URLs.</li>
+ *   <li>Resolves or creates {@link Source} and {@link Category} records in batch.</li>
+ *   <li>Delegates ML-based category and sentiment enrichment to {@link EnrichmentPort}.</li>
+ *   <li>Persists new articles and, for trending feeds, creates {@link Trending} links.</li>
+ * </ol>
+ */
 @RequiredArgsConstructor
 @Slf4j
 public class NewsIngestionService {
@@ -29,6 +42,12 @@ public class NewsIngestionService {
     private final NewsProviderPort newsProvider;
     private final EnrichmentPort enrichmentPort;
 
+    /**
+     * Synchronizes the database with the latest global and trending news.
+     *
+     * <p>Fetches up to 100 global articles (resuming from the most recently stored UUID)
+     * and up to 50 trending articles, then processes each batch independently.
+     */
     public void syncAllNews() {
         // Sync Global News
         String latestUuid = articleRepo.findLatestArticleUuid().orElse(null);
@@ -40,6 +59,22 @@ public class NewsIngestionService {
         processBatch(trendingNews, true);
     }
 
+    /**
+     * Processes a batch of incoming articles: deduplicates, enriches, and persists them.
+     *
+     * <p>Articles whose URLs already exist in the database are silently skipped.
+     * New articles are built with a default {@code "General"} category (overridden by
+     * ML enrichment), then saved. If {@code isTrendingFeed} is {@code true}, a
+     * {@link Trending} record is also created for each saved article.
+     *
+     * <p>Returns immediately if {@code incomingBatch} is {@code null}, empty, or contains
+     * only already-known URLs.
+     *
+     * @param incomingBatch  the raw articles returned by the news provider; may be
+     *                       {@code null} or empty
+     * @param isTrendingFeed {@code true} if this batch originates from the trending feed,
+     *                       causing {@link Trending} records to be created alongside articles
+     */
     private void processBatch(List<IncomingArticle> incomingBatch, boolean isTrendingFeed) {
         if (incomingBatch == null || incomingBatch.isEmpty()) return;
 
@@ -80,11 +115,10 @@ public class NewsIngestionService {
                     // Assuming ML enrichment sets the category later, default to General
                     .category(categoryMap.get("General"))
                     .build();
-
-            article = enrichmentPort.enrichArticle(article);
-
             entitiesToSave.add(article);
         }
+
+        entitiesToSave = enrichmentPort.enrichArticles(entitiesToSave);
 
         List<Article> savedArticles = articleRepo.saveAll(entitiesToSave);
         log.info("Bulk inserted {} new articles.", savedArticles.size());
@@ -98,6 +132,17 @@ public class NewsIngestionService {
         }
     }
 
+    /**
+     * Resolves {@link Source} entities for a batch of incoming articles, creating any
+     * that do not yet exist in the database.
+     *
+     * <p>Performs a single read to fetch all known sources by name, then a single writing
+     * for any missing ones, minimizing round-trips.
+     *
+     * @param articles the incoming articles whose source names need to be resolved
+     * @return a map from source name to the corresponding (possibly newly created)
+     *         {@link Source} entity
+     */
     private Map<String, Source> resolveSources(List<IncomingArticle> articles) {
         Set<String> sourceNames = articles.stream()
                 .map(IncomingArticle::sourceName)
@@ -123,6 +168,16 @@ public class NewsIngestionService {
         return sourceMap;
     }
 
+    /**
+     * Ensures the {@code "General"} {@link Category} exists in the database and returns
+     * it in a name-keyed map.
+     *
+     * <p>The {@code "General"} category serves as the default assigned to articles before
+     * ML enrichment overrides it. Using this method guarantees the category record is
+     * present, preventing FK constraint violations during the initial save.
+     *
+     * @return a map containing at least the {@code "General"} category entry
+     */
     private Map<String, Category> resolveCategories() {
         // Since ML determines category, and we default to "General" to avoid nulls,
         // we ensure "General" exists in this batch.

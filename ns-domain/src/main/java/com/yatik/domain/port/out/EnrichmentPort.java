@@ -1,12 +1,13 @@
 package com.yatik.domain.port.out;
 
 import com.yatik.domain.entity.Article;
+import java.util.List;
 
 public interface EnrichmentPort {
     /**
-     * Sends an article to the ML Service (or Mock) to get Sentiment & Category.
-     * @param article The article with title/description/content.
-     * @return The same article, but with 'sentiment', 'sentimentScore', and 'category' filled.
+     * Sends a batch of articles to the ML Service to get Sentiment & Category.
+     * @param articles The batch of articles to enrich.
+     * @return The same list, but with ML fields populated.
      */
-    Article enrichArticle(Article article);
+    List<Article> enrichArticles(List<Article> articles);
 }
