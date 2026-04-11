@@ -1,4 +1,4 @@
-package com.yatik.domain.port;
+package com.yatik.domain.port.out;
 
 import com.yatik.domain.entity.Article;
 

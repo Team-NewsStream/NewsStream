@@ -5,10 +5,13 @@ import com.yatik.domain.entity.Article;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface SpringDataArticleRepository extends JpaRepository<Article, Long> {
@@ -55,4 +58,16 @@ public interface SpringDataArticleRepository extends JpaRepository<Article, Long
         ORDER BY a.id DESC
     """)
     List<Article> findByCategoryName(String categoryName, Long lastId, int limit);
+
+    @Query("""
+        SELECT a.url FROM Article a
+        WHERE a.url IN :urls
+    """)
+    Set<String> findExistingUrls(@Param("urls") Collection<String> urls);
+
+    @Query("""
+        SELECT a.uuid FROM Article a
+        ORDER BY a.id DESC LIMIT 1
+    """)
+    Optional<String> findLatestArticleUuid();
 }

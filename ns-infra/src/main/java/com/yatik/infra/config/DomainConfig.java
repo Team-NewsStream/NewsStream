@@ -1,10 +1,11 @@
 package com.yatik.infra.config;
 
-import com.yatik.domain.port.EnrichmentPort;
-import com.yatik.domain.port.NewsProviderPort;
+import com.yatik.domain.port.out.EnrichmentPort;
+import com.yatik.domain.port.out.NewsProviderPort;
 import com.yatik.domain.repository.ArticleRepository;
 import com.yatik.domain.repository.CategoryRepository;
 import com.yatik.domain.repository.SourceRepository;
+import com.yatik.domain.repository.TrendingRepository;
 import com.yatik.domain.service.NewsIngestionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,7 @@ public class DomainConfig {
             ArticleRepository articleRepo,
             CategoryRepository categoryRepo,
             SourceRepository sourceRepo,
+            TrendingRepository trendingRepo,
             NewsProviderPort newsProvider,
             EnrichmentPort enrichmentPort
     ) {
@@ -40,6 +42,7 @@ public class DomainConfig {
                 articleRepo,
                 categoryRepo,
                 sourceRepo,
+                trendingRepo,
                 newsProvider,
                 enrichmentPort
         );

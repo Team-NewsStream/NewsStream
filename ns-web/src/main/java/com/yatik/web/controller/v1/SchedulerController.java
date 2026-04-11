@@ -43,7 +43,7 @@ public class SchedulerController {
         CompletableFuture.runAsync(() -> {
             try {
                 log.info("Starting scheduled ingestion task {}", taskId);
-                ingestionService.fetchAndProcessNews("general");
+                ingestionService.syncAllNews();
             } catch (Exception e) {
                 log.error("Task {} failed", taskId, e);
             }

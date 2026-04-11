@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import com.yatik.domain.repository.SourceRepository;
 import com.yatik.infra.repository.SpringDataSourceRepository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,7 +33,17 @@ public class SourcePersistenceAdapter implements SourceRepository {
     }
 
     @Override
+    public List<Source> saveAll(List<Source> sources) {
+        return jpaRepository.saveAll(sources);
+    }
+
+    @Override
     public Optional<Source> findByName(String name) {
         return jpaRepository.findByName(name);
+    }
+
+    @Override
+    public List<Source> findByNames(Collection<String> names) {
+        return jpaRepository.findByNames(names);
     }
 }

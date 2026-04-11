@@ -2,8 +2,10 @@ package com.yatik.domain.repository;
 
 import com.yatik.domain.entity.Article;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ArticleRepository {
     Article save(Article article);
@@ -12,9 +14,17 @@ public interface ArticleRepository {
     Optional<Article> findByUrl(String url);
     boolean existsByUrl(String url);
 
+    /** Finds which of the provided URLs already exist in the DB */
+    Set<String> findExistingUrls(Collection<String> urls);
+
+    /** Bulk insert */
+    List<Article> saveAll(List<Article> articles);
+
+    Optional<String> findLatestArticleUuid();
+
     /**
      * Fetches trending articles for the home page.
-     * * @param lastSeenId  The ID of the last item in the list (for pagination).
+     * * @param lastSeenId The ID of the last item in the list (for pagination).
      * If null, fetch the very top (first page).
      * @param limit How many items to fetch (pageSize).
      * @param omitNegative If true, filter out NEGATIVE sentiment articles.

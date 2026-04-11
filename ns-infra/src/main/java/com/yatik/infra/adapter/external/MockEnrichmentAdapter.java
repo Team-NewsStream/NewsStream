@@ -2,7 +2,7 @@ package com.yatik.infra.adapter.external;
 
 import com.yatik.domain.entity.Article;
 import com.yatik.domain.entity.Category;
-import com.yatik.domain.port.EnrichmentPort;
+import com.yatik.domain.port.out.EnrichmentPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;

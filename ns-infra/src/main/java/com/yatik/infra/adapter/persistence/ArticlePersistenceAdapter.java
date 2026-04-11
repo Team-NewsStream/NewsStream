@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 import com.yatik.domain.repository.ArticleRepository;
 import com.yatik.infra.repository.SpringDataArticleRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Adapter implementation of the {@link ArticleRepository} interface responsible for persistence operations
@@ -47,6 +49,21 @@ public class ArticlePersistenceAdapter implements ArticleRepository {
     @Override
     public boolean existsByUrl(String url) {
         return jpaRepository.existsByUrl(url);
+    }
+
+    @Override
+    public Set<String> findExistingUrls(Collection<String> urls) {
+        return jpaRepository.findExistingUrls(urls);
+    }
+
+    @Override
+    public List<Article> saveAll(List<Article> articles) {
+        return jpaRepository.saveAll(articles);
+    }
+
+    @Override
+    public Optional<String> findLatestArticleUuid() {
+        return jpaRepository.findLatestArticleUuid();
     }
 
     @Override

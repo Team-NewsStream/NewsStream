@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.yatik.domain.repository.CategoryRepository;
 import com.yatik.infra.repository.SpringDataCategoryRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,16 @@ import java.util.Optional;
 public class CategoryPersistenceAdapter implements CategoryRepository {
 
     private final SpringDataCategoryRepository jpaRepository;
+
+    @Override
+    public List<Category> findByNames(Collection<String> names) {
+        return jpaRepository.findByNames(names);
+    }
+
+    @Override
+    public List<Category> saveAll(List<Category> categories) {
+        return jpaRepository.saveAll(categories);
+    }
 
     @Override
     public Category save(Category category) {

@@ -37,6 +37,55 @@ NewsStream is an Android app that provides the latest global news, offering cate
     ./mvnw spring-boot:run
     ```
 
+## ER Diagram
+
+```mermaid
+erDiagram
+    categories ||--o{ articles : has
+    sources ||--o{ articles : has
+    articles ||--|| trending : ranks
+
+    users {
+        varchar email PK
+        varchar name
+        varchar passwordHash
+        varchar role
+    }
+
+    categories {
+        bigint id PK
+        varchar name
+    }
+
+    sources {
+        bigint id PK
+        varchar name
+        varchar logo_url
+    }
+
+    articles {
+        bigint id PK
+        varchar uuid
+        varchar title
+        varchar url
+        text description
+        varchar urlToImage
+        bigint category_id FK
+        bigint source_id FK
+        timestamp publishedAt
+        timestamp createdAt
+        timestamp updatedAt
+        text content
+        varchar sentiment
+    }
+
+    trending {
+        bigint id PK
+        bigint article_id FK
+        integer rank
+    }
+```
+
 ## API Endpoints
 
 ### Authentication

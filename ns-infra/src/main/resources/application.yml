@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${AWS_DB_URL}
-    username: ${AWS_DB_USER}
-    password: ${AWS_DB_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -19,9 +19,12 @@ spring:
           order_inserts: true
           order_updates: true
 
-newsapi:
-  baseUrl: ${NEWSAPI_BASE_URL}
-  apiKey: ${NEWSAPI_KEY}
+  threads:
+    virtual:
+      enabled: true
+
+scraper:
+  base-url: ${SCRAPER_BASE_URL}
 
 scheduler:
   internal-token: ${SCHEDULER_INTERNAL_TOKEN}
