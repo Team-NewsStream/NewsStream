@@ -1,5 +1,6 @@
 package com.yatik.web.controller.v1;
 
+import com.yatik.domain.entity.Role;
 import com.yatik.domain.entity.User;
 import com.yatik.domain.model.AuthTokenPair;
 import com.yatik.domain.service.AuthService;
@@ -36,6 +37,7 @@ public class AuthController {
                 .email(request.email())
                 .name(request.name())
                 .passwordHash(request.password()) // Service layer handles hashing
+                .role(Role.USER)
                 .build();
 
         try {
