@@ -1,9 +1,9 @@
 package com.yatik.web.controller.v1;
 
 import com.yatik.domain.entity.Article;
-import com.yatik.domain.entity.Category;
 import com.yatik.domain.repository.ArticleRepository;
 import com.yatik.domain.repository.CategoryRepository;
+import com.yatik.web.dto.CategoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,14 @@ public class NewsController {
 
     @GetMapping("/categories")
     @Operation(summary = "Fetch categories", description = "Retrieves a list of all available news categories.")
-    public ResponseEntity<List<Category>> fetchCategories() {
-        return ResponseEntity.ok(categoryRepo.findAll());
+    public ResponseEntity<List<CategoryResponse>> fetchCategories() {
+        List<CategoryResponse> response = categoryRepo.findAll().stream()
+                .map(category -> new CategoryResponse(
+                        category.getId(),
+                        category.getName()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 }
