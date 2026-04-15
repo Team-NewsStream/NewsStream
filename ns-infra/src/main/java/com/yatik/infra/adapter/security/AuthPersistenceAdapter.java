@@ -72,8 +72,9 @@ public class AuthPersistenceAdapter implements AuthService {
             throw new IllegalStateException("Invalid refresh token");
         }
         String subject = jwtProvider.extractUsername(refreshToken);
-        String accessToken = jwtProvider.generateAccessToken(subject);
-        return new AuthTokenPair(accessToken, refreshToken);
+        String newRefreshToken = jwtProvider.generateRefreshToken(subject);
+        String newAccessToken = jwtProvider.generateAccessToken(subject);
+        return new AuthTokenPair(newAccessToken, newRefreshToken);
     }
 
     @Override
