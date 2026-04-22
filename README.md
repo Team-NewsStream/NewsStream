@@ -1,6 +1,6 @@
 # NewsStream
 
-NewsStream is an Android app that provides the latest global news, offering categorized articles, sentiment analysis, and summarized content for quick reading. Stay informed with real-time updates and essential news highlights.
+Spring Boot backend that provides the latest global news, offering categorized articles, sentiment analysis, and summarized content for quick reading. Stay informed with real-time updates and essential news highlights.
 
 ## Features
 
